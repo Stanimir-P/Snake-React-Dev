@@ -123,14 +123,14 @@ h2 {
 
 .score {
 	position: absolute;
-	top: 25%;
+	top: 20%;
 	left: 25%;
 	color: black;
 }
 
 .highScore {
 	position: absolute;
-	top: 40%;
+	top: 32%;
 	left: 9%;
 	color: black;
 }
