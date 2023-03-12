@@ -1,26 +1,244 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import Controls from './media/controls.png';
+import Rat from './media/rat.png';
+import Snake from './media/snake.png';
+import useInterval from './useInterval';
+
+const canvasX = 1000;
+const canvasY = 1000;
+const initialSnake = [[4, 10], [4, 10]];
+const initialRat = [14, 10];
+const scale = 50;
+const timeDelay = 100;
+const totalPoints = 324;
 
 function App() {
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [snake, setSnake] = useState(initialSnake);
+  const [rat, setRat] = useState(initialRat);
+  const [direction, setDirection] = useState([0, -1]);
+  const [delay, setDelay] = useState<number | null>(null);
+  const [isPause, setIsPause] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [win, setWin] = useState<boolean>(false);
+  const [score, setScore] = useState(0);
+  const [newGame, setNewGame] = useState<boolean>(true);
+  const highScore = localStorage.getItem('snakeScore');
+
+  useInterval(() => runGame(), delay);
+
+  useEffect(() => {
+    let ratElement = document.getElementById('rat') as HTMLCanvasElement;
+
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        context.setTransform(scale, 0, 0, scale, 0, 0);
+
+        // erase pixels behind snake while moving
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        // snake color
+        context.fillStyle = '#a3d001';
+
+        // create snake
+        snake.forEach(([x, y]) => context.fillRect(x, y, 1, 1));
+
+        // draw rat
+        context.drawImage(ratElement, rat[0], rat[1], 1, 1);
+      }
+    }
+  }, [snake, rat]);
+
+  function play() {
+
+    if (!gameOver && !win && !newGame) {
+
+      if (isPause) {
+        setIsPause(false);
+        setDelay(timeDelay);
+        return;
+      }
+
+      setIsPause(true);
+      setDelay(null);
+      return;
+    }
+
+    setSnake(initialSnake);
+    setRat(initialRat);
+    setDirection([1, 0]);
+    setDelay(timeDelay);
+    setScore(0);
+    setGameOver(false);
+    setWin(false);
+    setIsPause(false);
+    setNewGame(false);
+  }
+
+  function handleSetScore() {
+    if (score > Number(localStorage.getItem('snakeScore'))) {
+      localStorage.setItem('snakeScore', JSON.stringify(score));
+    }
+  };
+
+  function checkCollision(head: number[]) {
+
+    // checks if outside the canvas
+    for (let i = 0; i < head.length; i++) {
+      if (head[i] < 0 || head[i] * scale >= canvasX) return true;
+    }
+
+    // checks if snake hits itself
+    for (const s of snake) {
+      if (head[0] === s[0] && head[1] === s[1]) return true;
+    }
+
+    return false;
+  }
+
+  function appleAte(newSnake: number[][]) {
+
+    let coordinate = rat.map(() => Math.floor(Math.random() * canvasX / scale));
+
+    if (newSnake[0][0] === rat[0] && newSnake[0][1] === rat[1]) {
+      let newApple = coordinate;
+
+      setScore(score + 1);
+      setRat(newApple);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  function runGame() {
+    if (isPause) { return; }
+
+    const newSnake = [...snake];
+    const newSnakeHead = [newSnake[0][0] + direction[0], newSnake[0][1] + direction[1]];
+
+    newSnake.unshift(newSnakeHead);
+
+    if (score >= totalPoints) {
+      setDelay(null);
+      setWin(true);
+      handleSetScore();
+      setNewGame(true);
+    }
+
+    if (checkCollision(newSnakeHead)) {
+      setDelay(null);
+      setGameOver(true);
+      handleSetScore();
+      setNewGame(true);
+    }
+
+    if (!appleAte(newSnake)) {
+      newSnake.pop();
+    };
+
+    setSnake(newSnake);
+  };
+
+  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+
+    const is180degrees: boolean =
+      (e.key === 'ArrowLeft' && JSON.stringify(direction) === JSON.stringify([1, 0])) ||
+      (e.key === 'ArrowUp' && JSON.stringify(direction) === JSON.stringify([0, 1])) ||
+      (e.key === 'ArrowRight' && JSON.stringify(direction) === JSON.stringify([-1, 0])) ||
+      (e.key === 'ArrowDown' && JSON.stringify(direction) === JSON.stringify([0, -1]));
+
+    if (is180degrees) { return; }
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        setDirection([-1, 0]);
+        break;
+
+      case 'ArrowUp':
+        setDirection([0, -1]);
+        break;
+
+      case 'ArrowRight':
+        setDirection([1, 0]);
+        break;
+
+      case 'ArrowDown':
+        setDirection([0, 1]);
+        break;
+
+    };
+
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app" onKeyDown={(e) => changeDirection(e)}>
+
+      {/* Left column */}
+
+      <div className='leftColumn'>
+        <img src={Snake} alt='rattlesnake' className='snake' />
+      </div>
+
+      {/* Center column */}
+
+      <div className='centerColumn'>
+        <div className='title'>
+          Snake game
+        </div>
+
+        <div className='canvasContainer'>
+          <canvas className='playArea' ref={canvasRef} width={`${canvasX}px`} height={`${canvasY}px`} />
+
+          <img id='rat' src={Rat} alt='rat' />
+
+          {gameOver && <div className='gameOver'>Game Over!</div>}
+
+          {win && <div className='win'>You win!</div>}
+        </div>
+
+
+        <div className='playButtonContainer'>
+          <button onClick={play} className='playButton'>{(newGame || isPause) ? 'Play' : 'Pause'}</button>
+        </div>
+      </div>
+
+      {/* Right column */}
+
+      <div className='rightColumn'>
+        <div className='scoreBox'>
+          <div className='score'>Score:{score}</div>
+
+          <div className='highScore'>High Score:{highScore ? highScore : 0}</div>
+        </div>
+
+        {renderControls()}
+
+        {renderSpacer()}
+      </div>
     </div>
   );
 }
 
 export default App;
+
+function renderSpacer() {
+  return <div style={{ display: 'flex', flex: 1 }}></div>
+}
+
+function renderControls() {
+  return (
+    <div className='controlsContainer'>
+      <div className='controlsTitle'>Use</div>
+
+      <img src={Controls} height='60' width='100' alt='controls' />
+    </div>
+  );
+}

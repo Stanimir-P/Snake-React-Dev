@@ -1,38 +1,150 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitter:wght@700&display=swap');
+
+html,
+body {
+	height: 100%;
+	width: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+	background: black;
+	color: #EAE0DA;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#root {
+	height: 100%;
+	width: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+h2 {
+	font-size: 18px;
 }
 
-.App-link {
-  color: #61dafb;
+.app {
+	display: flex;
+	justify-content: space-between;
+	height: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.leftColumn,
+.centerColumn,
+.rightColumn {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+/* Left column */
+
+.leftColumn {
+	justify-content: flex-end;
+}
+
+.snake {
+	height: 300px;
+}
+
+/* Center column */
+
+.title {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Bitter', serif;
+	font-size: 50px;
+}
+
+.canvasContainer {
+	position: relative;
+	flex: 2;
+}
+
+.playArea {
+	width: 585px;
+	height: 440px;
+	border: 10px groove rgba(160, 40, 0, 0.55);
+}
+
+#rat {
+	display: none;
+}
+
+.gameOver,
+.win {
+	position: absolute;
+	top: 45%;
+	left: 23%;
+	font-size: 35px;
+	font-family: 'Press Start 2P', cursive;
+}
+
+.playButtonContainer {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	align-items: center;
+}
+
+.playButton {
+	background: #502c7b;
+	border: 2px solid #EAE0DA;
+	padding: 10px;
+	box-shadow: 4px 4px 0px 0px #EAE0DA;
+	font-family: 'Press Start 2P', cursive;
+	font-size: 0.9em;
+	font-weight: 700;
+	letter-spacing: 5px;
+	text-transform: uppercase;
+}
+
+.playButton:hover {
+	cursor: pointer;
+}
+
+/* Right column */
+
+.rightColumn {
+	margin-right: 50px;
+}
+
+.scoreBox {
+	flex: 1;
+	position: relative;
+	background-image: url("./media/sign.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 100%;
+	width: 250px;
+	font-family: 'Press Start 2P', cursive;
+}
+
+
+.score {
+	position: absolute;
+	top: 25%;
+	left: 25%;
+	color: black;
+}
+
+.highScore {
+	position: absolute;
+	top: 40%;
+	left: 9%;
+	color: black;
+}
+
+.controlsContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Bitter', serif;
+	font-size: 20px;
+}
+
+.controlsTitle {
+	color: '#EAE0DA';
+	margin-right: 16px;
+	font-size: 30px;
 }
