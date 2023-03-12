@@ -30,6 +30,7 @@ function App() {
   useInterval(() => runGame(), delay);
 
   useEffect(() => {
+
     let ratElement = document.getElementById('rat') as HTMLCanvasElement;
 
     if (canvasRef.current) {
@@ -82,6 +83,7 @@ function App() {
   }
 
   function handleSetScore() {
+
     if (score > Number(localStorage.getItem('snakeScore'))) {
       localStorage.setItem('snakeScore', JSON.stringify(score));
     }
