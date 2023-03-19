@@ -10,7 +10,8 @@ const canvasY = 1000;
 const initialSnake = [[4, 10], [4, 10]];
 const initialRat = [14, 10];
 const scale = 50;
-const timeDelay = 100;
+const minTimeDelay = 80;
+const maxTimeDelay = 200;
 const totalPoints = 324;
 
 function App() {
@@ -23,8 +24,8 @@ function App() {
   const [isPause, setIsPause] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [win, setWin] = useState<boolean>(false);
-  const [score, setScore] = useState(0);
   const [newGame, setNewGame] = useState<boolean>(true);
+  const [score, setScore] = useState(0);
   const highScore = localStorage.getItem('snakeScore');
 
   useInterval(() => runGame(), delay);
@@ -56,30 +57,58 @@ function App() {
     }
   }, [snake, rat]);
 
-  function play() {
+  function runGame() {
+    if (isPause) { return; }
 
-    if (!gameOver && !win && !newGame) {
+    calculateDelay(score);
 
-      if (isPause) {
-        setIsPause(false);
-        setDelay(timeDelay);
-        return;
-      }
+    const newSnake = [...snake];
+    const newSnakeHead = [newSnake[0][0] + direction[0], newSnake[0][1] + direction[1]];
 
-      setIsPause(true);
+    newSnake.unshift(newSnakeHead);
+
+    if (score >= totalPoints) {
       setDelay(null);
+      setWin(true);
+      handleSetScore();
+      setNewGame(true);
+    }
+
+    if (checkCollision(newSnakeHead)) {
+      setDelay(null);
+      setGameOver(true);
+      handleSetScore();
+      setNewGame(true);
+    }
+
+    if (!appleAte(newSnake)) {
+      newSnake.pop();
+    };
+
+    setSnake(newSnake);
+  };
+
+  function calculateDelay(score: number | null): void {
+
+    const minDelayScore = ((maxTimeDelay - minTimeDelay) / 10) * 5; // what score min delay is reached
+
+    if (!score || score < 5) {
+      setDelay(maxTimeDelay);
       return;
     }
 
-    setSnake(initialSnake);
-    setRat(initialRat);
-    setDirection([1, 0]);
-    setDelay(timeDelay);
-    setScore(0);
-    setGameOver(false);
-    setWin(false);
-    setIsPause(false);
-    setNewGame(false);
+    if (score >= minDelayScore) {
+      setDelay(minTimeDelay);
+      return;
+    };
+
+    // decrease delay by 10 every 5 points
+    if (score % 5 !== 0) {
+      setDelay(maxTimeDelay - (Math.floor(score / 5) * 10));
+      return;
+    }
+
+    setDelay(maxTimeDelay - ((score / 5) * 10));
   }
 
   function handleSetScore() {
@@ -120,34 +149,31 @@ function App() {
     return false;
   }
 
-  function runGame() {
-    if (isPause) { return; }
+  function play() {
 
-    const newSnake = [...snake];
-    const newSnakeHead = [newSnake[0][0] + direction[0], newSnake[0][1] + direction[1]];
+    if (!gameOver && !win && !newGame) {
 
-    newSnake.unshift(newSnakeHead);
+      if (isPause) {
+        setIsPause(false);
+        setDelay(maxTimeDelay);
+        return;
+      }
 
-    if (score >= totalPoints) {
+      setIsPause(true);
       setDelay(null);
-      setWin(true);
-      handleSetScore();
-      setNewGame(true);
+      return;
     }
 
-    if (checkCollision(newSnakeHead)) {
-      setDelay(null);
-      setGameOver(true);
-      handleSetScore();
-      setNewGame(true);
-    }
-
-    if (!appleAte(newSnake)) {
-      newSnake.pop();
-    };
-
-    setSnake(newSnake);
-  };
+    setSnake(initialSnake);
+    setRat(initialRat);
+    setDirection([1, 0]);
+    setDelay(maxTimeDelay);
+    setIsPause(false);
+    setGameOver(false);
+    setWin(false);
+    setNewGame(false);
+    setScore(0);
+  }
 
   function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
 
@@ -175,9 +201,7 @@ function App() {
       case 'ArrowDown':
         setDirection([0, 1]);
         break;
-
     };
-
   };
 
   return (
@@ -215,32 +239,24 @@ function App() {
       {/* Right column */}
 
       <div className='rightColumn'>
+
         <div className='scoreBox'>
           <div className='score'>Score:{score}</div>
 
           <div className='highScore'>High Score:{highScore ? highScore : 0}</div>
         </div>
 
-        {renderControls()}
+        <div className='controlsContainer'>
+          <div className='controlsTitle'>Use</div>
 
-        {renderSpacer()}
+          <img src={Controls} height='60' width='100' alt='controls' />
+        </div>
+
+        {/* Spacer */}
+        <div style={{ display: 'flex', flex: 1 }}></div>
       </div>
     </div>
   );
 }
 
 export default App;
-
-function renderSpacer() {
-  return <div style={{ display: 'flex', flex: 1 }}></div>
-}
-
-function renderControls() {
-  return (
-    <div className='controlsContainer'>
-      <div className='controlsTitle'>Use</div>
-
-      <img src={Controls} height='60' width='100' alt='controls' />
-    </div>
-  );
-}
