@@ -102,13 +102,7 @@ function App() {
       return;
     };
 
-    // decrease delay by 10 every 5 points
-    if (score % 5 !== 0) {
-      setDelay(maxTimeDelay - (Math.floor(score / 5) * 10));
-      return;
-    }
-
-    setDelay(maxTimeDelay - ((score / 5) * 10));
+    setDelay(maxTimeDelay - (Math.floor(score / 5) * 10)); // decrease delay by 10 every 5 points
   }
 
   function handleSetScore() {
