@@ -3,6 +3,7 @@ import './App.css';
 import Controls from './media/controls.png';
 import Rat from './media/rat.png';
 import Snake from './media/snake.png';
+import SpaceKey from './media/spaceKey.png';
 import useInterval from './useInterval';
 
 const canvasX = 1000;
@@ -16,15 +17,15 @@ const totalPoints = 324;
 
 function App() {
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef(null);
   const [snake, setSnake] = useState(initialSnake);
   const [rat, setRat] = useState(initialRat);
   const [direction, setDirection] = useState([0, -1]);
-  const [delay, setDelay] = useState<number | null>(null);
-  const [isPause, setIsPause] = useState<boolean>(false);
-  const [gameOver, setGameOver] = useState<boolean>(false);
-  const [win, setWin] = useState<boolean>(false);
-  const [newGame, setNewGame] = useState<boolean>(true);
+  const [delay, setDelay] = useState(null);
+  const [isPause, setIsPause] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [win, setWin] = useState(false);
+  const [newGame, setNewGame] = useState(true);
   const [score, setScore] = useState(0);
   const highScore = localStorage.getItem('snakeScore');
 
@@ -32,7 +33,7 @@ function App() {
 
   useEffect(() => {
 
-    let ratElement = document.getElementById('rat') as HTMLCanvasElement;
+    let ratElement = document.getElementById('rat');
 
     if (canvasRef.current) {
       const canvas = canvasRef.current;
@@ -88,7 +89,7 @@ function App() {
     setSnake(newSnake);
   };
 
-  function calculateDelay(score: number | null): void {
+  function calculateDelay(score) {
 
     const minDelayScore = ((maxTimeDelay - minTimeDelay) / 10) * 5; // what score min delay is reached
 
@@ -112,7 +113,7 @@ function App() {
     }
   };
 
-  function checkCollision(head: number[]) {
+  function checkCollision(head) {
 
     // checks if outside the canvas
     for (let i = 0; i < head.length; i++) {
@@ -127,7 +128,7 @@ function App() {
     return false;
   }
 
-  function appleAte(newSnake: number[][]) {
+  function appleAte(newSnake) {
 
     let coordinate = rat.map(() => Math.floor(Math.random() * canvasX / scale));
 
@@ -169,9 +170,9 @@ function App() {
     setScore(0);
   }
 
-  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+  function changeDirection(e) {
 
-    const is180degrees: boolean =
+    const is180degrees =
       (e.key === 'ArrowLeft' && JSON.stringify(direction) === JSON.stringify([1, 0])) ||
       (e.key === 'ArrowUp' && JSON.stringify(direction) === JSON.stringify([0, 1])) ||
       (e.key === 'ArrowRight' && JSON.stringify(direction) === JSON.stringify([-1, 0])) ||
@@ -194,6 +195,9 @@ function App() {
 
       case 'ArrowDown':
         setDirection([0, 1]);
+        break;
+
+      default:
         break;
     };
   };
@@ -234,16 +238,27 @@ function App() {
 
       <div className='rightColumn'>
 
-        <div className='scoreBox'>
-          <div className='score'>Score:{score}</div>
+        <div className='scoreBoxContainer'>
 
-          <div className='highScore'>High Score:{highScore ? highScore : 0}</div>
+          <div className='scoreBox'>
+            <div className='score'>Score:{score}</div>
+
+            <div className='highScore'>High Score:{highScore ? highScore : 0}</div>
+          </div>
         </div>
 
         <div className='controlsContainer'>
-          <div className='controlsTitle'>Use</div>
+          <div className='arrowKeys'>
+            <img src={Controls} height='60' width='100' alt='arrowKeys' />
 
-          <img src={Controls} height='60' width='100' alt='controls' />
+            <div className='arrowsTitle'>- Move</div>
+          </div>
+
+          <div className='spaceKey'>
+            <img src={SpaceKey} height='30' width='50' alt='spaceKey' />
+
+            <div className='spaceTitle'>- Pause</div>
+          </div>
         </div>
 
         {/* Spacer */}

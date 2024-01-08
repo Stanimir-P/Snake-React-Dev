@@ -115,36 +115,43 @@ h2 {
 	background-image: url("./media/sign.png");
 	background-repeat: no-repeat;
 	background-size: contain;
-	height: 100%;
+	height: 400px;
 	width: 250px;
 	font-family: 'Press Start 2P', cursive;
 }
 
-
 .score {
 	position: absolute;
-	top: 20%;
+	top: 22%;
 	left: 25%;
 	color: black;
 }
 
 .highScore {
 	position: absolute;
-	top: 32%;
+	top: 34%;
 	left: 9%;
 	color: black;
 }
 
 .controlsContainer {
 	display: flex;
-	justify-content: center;
-	align-items: center;
+	flex-direction: column;
 	font-family: 'Bitter', serif;
-	font-size: 20px;
 }
 
-.controlsTitle {
+.arrowKeys,
+.spaceKey {
+	display: flex;
+	align-items: center;
+	padding: 16px 0px;
+}
+
+.arrowsTitle,
+.spaceTitle {
+	display: flex;
+	width: 100%;
 	color: '#EAE0DA';
-	margin-right: 16px;
+	margin-left: 16px;
 	font-size: 30px;
 }
