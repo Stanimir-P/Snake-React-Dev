@@ -16,4 +16,4 @@ Local Storage: store user's highest score
 
 ## Deployment
 
-[Snake React Game](https://stanimir-p.github.io/Snake-React/).
+[Snake React Game](https://stanimir-p.github.io/Snake-React/)
