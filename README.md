@@ -9,10 +9,10 @@ Snake is an old fashion game where the player maneuvers the end of a growing lin
 
 The Snake React web app was built using the following technologies:
 
-React: web app build
-JavaScript: web app's logic
-CSS: plain CSS for styling
-Local Storage: store user's highest score
+- React: web app build
+- JavaScript: web app's logic
+- CSS: plain CSS for styling
+- Local Storage: store user's highest score
 
 ## Deployment
 
