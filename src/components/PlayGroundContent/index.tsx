@@ -46,6 +46,7 @@ export const PlayGroundContent: React.FunctionComponent<IPlayGroundContentProps>
     }
 
     function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (isPause) { return; }
 
         const is180degrees: boolean =
             (e.key === 'ArrowLeft' && JSON.stringify(snakeDirection) === JSON.stringify([1, 0])) ||
