@@ -27,9 +27,9 @@ h2 {
 	height: 100%;
 }
 
-.leftColumn,
-.centerColumn,
-.rightColumn {
+.leftSideContent,
+.playGroundContent,
+.rightSideContent {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -37,7 +37,7 @@ h2 {
 
 /* Left column */
 
-.leftColumn {
+.leftSideContent {
 	justify-content: flex-end;
 }
 
@@ -105,7 +105,7 @@ h2 {
 
 /* Right column */
 
-.rightColumn {
+.rightSideContent {
 	margin-right: 50px;
 }
 
